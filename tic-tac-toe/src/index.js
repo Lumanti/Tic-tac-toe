@@ -5,8 +5,7 @@ import './index.css';
 function Square(props){
     return(
         <button 
-            className={'square' + (props.highlight ? 'highlighted' : '')}
-            // className={'square' + (props.highlight ? 'highlighted' : '')}
+            className={'square' + (props.highlight ? ' highlighted' : '')}
             onClick={ 
                 props.onClick
             }>
