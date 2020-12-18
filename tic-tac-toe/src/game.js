@@ -48,13 +48,6 @@ export default class Game extends React.Component {
         })
     }
 
-    //hanndles onclick function to change the isAscending state 
-    handleToggleMoves() {
-        this.setState({
-            isAscending: !this.state.isAscending,
-        });
-    }
-
     render() {
         const history = this.state.history;
         const stepNumber = this.state.stepNumber;
