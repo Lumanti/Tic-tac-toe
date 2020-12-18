@@ -1,7 +1,6 @@
-import React from 'react';
 import './index.css';
 
-export default function Square(props){
+export default function Square(props: any){
     const className = 'square' + (props.highlight ? ' highlighted' : '');
     return(
         <button 

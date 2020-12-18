@@ -9,7 +9,7 @@ export default function Game() {
     let [xIsNext, setxIsNext] = useState(true);
     
     //to handle onclick function when each square is clicked
-    const handleClick = (i) => {
+    function handleClick(i) {
         //create duplicate of variables to create a new state instead of making changes in the existing ones
         let duplicateHistory = history.slice(0, stepNumber + 1);
         const current = duplicateHistory[duplicateHistory.length - 1];

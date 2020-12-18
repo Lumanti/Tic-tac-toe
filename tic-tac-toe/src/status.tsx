@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import './index.css';
 // import Board from './board';
 
-function Status(props){
+interface historyType{
+    squares: Array<string>,
+    latest_move_index: number,
+}
+
+function Status(props: any){
     const [isAscending, setisAscending] = useState(true);
     const history= props.history;
     const stepNumber= props.stepNumber;
 
     //moves list
-    const moves = history.map((step, move) => {
+    const moves = history.map((step: historyType, move: number) => {
         let latest_move_index = step.latest_move_index;
         let row = Math.floor(latest_move_index / 3) + 1;
         let col = latest_move_index % 3 + 1;

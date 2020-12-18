@@ -2,8 +2,14 @@ import React from 'react';
 import './index.css';
 import Square from './square';
 
-export default class Board extends React.Component {  
-    renderSquare(i) {
+interface stateType{
+    winLine: (null | Array<number>),
+    squares: Array<String>,
+    onClick: Function,
+}
+
+export default class Board extends React.Component <stateType, {}> {  
+    renderSquare(i: number) {
         const winLine = this.props.winLine;
         return (
             <Square 

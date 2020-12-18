@@ -3,12 +3,24 @@ import './index.css';
 import Board from './board';
 import Status from './status';
 
-export default class Game extends React.Component {
-    constructor(props){
+interface stateObject {
+    history: Array<{
+        squares:Array<String>,
+        latest_move_index: number
+    }>;
+    stepNumber: number;
+    xIsNext: boolean;
+    isAscending: boolean;
+}
+
+
+export default class Game extends React.Component <{},stateObject> {
+    constructor(props: any) {
         super(props);
         this.state = {
             history: [{
                 squares: Array(9).fill(null),
+                latest_move_index: 0,
             }],
             stepNumber: 0,
             xIsNext: true,
@@ -17,13 +29,13 @@ export default class Game extends React.Component {
     }
 
     //to handle onclick function when each square is clicked
-    handleClick(i){
+    handleClick(i: number){
         //create duplicate of variables to create a new state instead of making changes in the existing ones
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         
-        //returns when there is a winner or every square is filles
+        //returns when there is a winner or every square is files
         if (gameStatus(squares).winner || squares[i]) {
             return;
         }
@@ -41,7 +53,7 @@ export default class Game extends React.Component {
     }
 
     //handles onclick function when item from moves list is clicked
-    jumpTo(step){
+    jumpTo(step: number){
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2 === 0),
@@ -53,14 +65,14 @@ export default class Game extends React.Component {
         const stepNumber = this.state.stepNumber;
         const current = history[stepNumber];
         const result = gameStatus(current.squares);
-        let winLine = result.winLine;   //array of square indices indicating the last move of winner
-        
+        let winLine: (null | Array<number>) = result.winLine;   //array of square indices indicating the last move of winner
+
         return (
             <div className="game">
                 <div className="game-board">
                     <Board
                         squares= {current.squares}
-                        onClick= {(i) => {this.handleClick(i)}}
+                        onClick= {(i: number) => {this.handleClick(i)}}
                         winLine= {winLine} />
                 </div>
                 <div className="game-info">
@@ -68,7 +80,7 @@ export default class Game extends React.Component {
                         history= {history}
                         stepNumber= {stepNumber}
                         xIsNext= {this.state.xIsNext}
-                        onClick= {(move) => {this.jumpTo(move)}}
+                        onClick= {(move: number) => {this.jumpTo(move)}}
                         gameStatus= {gameStatus} />
                 </div>
             </div>
@@ -77,7 +89,7 @@ export default class Game extends React.Component {
 }
 
 
-function gameStatus(squares){
+function gameStatus(squares: string | any[]){
     //possible array for winning game
     const lines = [
         [0, 1, 2],
