@@ -3,20 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props){
+    const className = 'square' + (props.highlight ? ' highlighted' : '');
     return(
         <button 
-            className={'square' + (props.highlight ? ' highlighted' : '')}
-            onClick={ 
-                props.onClick
-            }>
-        {props.value}
+            className={className}
+            onClick={props.onClick}>
+            {props.value}
         </button>
     ); 
 }
   
 class Board extends React.Component {  
     renderSquare(i) {
-        const winLine = this.props.winLine
+        const winLine = this.props.winLine;
         return (
             <Square 
                 key = {i}
@@ -29,6 +28,7 @@ class Board extends React.Component {
     render() {
         let board = []
         let rowsize = 3
+        //use two loops to render the square board
         for(let i=0; i < 3; i++) {
             let row = []
             for(let j=0; j < 3; j++) {
@@ -55,24 +55,31 @@ class Game extends React.Component {
         }
     }
 
+    //to handle onclick function when each square is clicked
     handleClick(i){
+        //create duplicate of variables to create a new state instead of making changes in the existing ones
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
-        if (calculateWinner(squares).winner || squares[i]) {
+        
+        //returns when there is a winner or every square is filles
+        if (gameStatus(squares).winner || squares[i]) {
             return;
         }
+
+        //taking turns
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
                 squares: squares,
-                latestmove: i,
+                latest_move_index: i,
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
         })
     }
 
+    //handles onclick function when item from moves list is clicked
     jumpTo(step){
         this.setState({
             stepNumber: step,
@@ -80,6 +87,7 @@ class Game extends React.Component {
         })
     }
 
+    //hanndles onclick function to change the isAscending state 
     handleToggleMoves() {
         this.setState({
             isAscending: !this.state.isAscending,
@@ -89,13 +97,12 @@ class Game extends React.Component {
     render() {
         const history = this.state.history;
         const stepNumber = this.state.stepNumber;
-        const current = history[stepNumber];
-        const result = calculateWinner(current.squares);
-                
+        
+        //moves list
         const moves = history.map((step, move) => {
-            let latestmove = step.latestmove;
-            let row = Math.floor(latestmove / 3) + 1;
-            let col = latestmove % 3 + 1;
+            let latest_move_index = step.latest_move_index;
+            let row = Math.floor(latest_move_index / 3) + 1;
+            let col = latest_move_index % 3 + 1;
             const desc = move ? 
                 'Go to move #' + move + ` (${row}, ${col})` : 
                 'Go to game start';
@@ -110,13 +117,17 @@ class Game extends React.Component {
             );
         })
 
+        //toggles the moves list based on state of isAscending
         const isAscending = this.state.isAscending;
         if (!isAscending) {
             moves.reverse();
         }
         
-        let winner = result.winner;
-        let winLine = result.winLine;
+        //status of game
+        const current = history[stepNumber];
+        const result = gameStatus(current.squares);
+        let winner = result.winner;  
+        let winLine = result.winLine;   //array of square indices indicating the last move of winner
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
@@ -146,7 +157,9 @@ class Game extends React.Component {
     }
 }
 
-function calculateWinner(squares){
+
+function gameStatus(squares){
+    //possible array for winning game
     const lines = [
         [0, 1, 2],
         [3, 4, 5],
@@ -157,6 +170,8 @@ function calculateWinner(squares){
         [0, 4, 8],
         [2, 4, 6]
     ];
+
+    //returns when there is winner
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -167,6 +182,8 @@ function calculateWinner(squares){
             };
         }
     }
+
+    //returns when there is at least one square null 
     for (let i=0; i < squares.length; i++) {
         if (squares[i] == null) {
             return {
@@ -176,7 +193,8 @@ function calculateWinner(squares){
             };;
         }
     }
-    // if all squares are filled
+
+    //returns if all squares are filled i.e. when there is draw
     return {
         winner: null,
         winLine: null,
